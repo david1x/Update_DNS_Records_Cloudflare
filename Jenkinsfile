@@ -14,14 +14,16 @@ pipeline {
 
         stage('Build and Run') {
             steps {
-
                 dir('/home/david/Desktop/github/Update_DNS_Records_Cloudflare') {
+                    
+                    // Activate the virtual environment
                     script {
-                        sh 'source venv/bin/activate'
+                        sh './venv/bin/activate'
                     }
                     
+                    // Run the Python script
                     script {
-                        sh 'python3 main.py'
+                        sh 'python main.py'
                     }
                 }
             }
