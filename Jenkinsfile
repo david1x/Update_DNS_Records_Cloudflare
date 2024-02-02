@@ -3,6 +3,12 @@ pipeline {
         label 'ubuntu'
     }
 
+    options {
+        // Set a custom workspace path
+        buildDiscarder(logRotator(numToKeepStr: '5'))
+        workspace '/path/to/your/workspace'
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -33,7 +39,7 @@ pipeline {
 
                     // Run the Python script
                     script {
-                        sh 'python main.py'
+                        sh 'python3 main.py'
                     }
                 }
             }
