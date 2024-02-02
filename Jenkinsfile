@@ -6,7 +6,7 @@ pipeline {
     options {
         // Set a custom workspace path
         buildDiscarder(logRotator(numToKeepStr: '5'))
-        workspace '/path/to/your/workspace'
+        workspace '/tmp/workspace/CloudFlareDNSUpdate'
     }
 
     stages {
