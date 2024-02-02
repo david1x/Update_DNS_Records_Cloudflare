@@ -14,27 +14,28 @@ pipeline {
 
         stage('Build and Run') {
             steps {
+                dir('/tmp/workspace/CloudFlareDNSUpdate') {
                     
-                // Create a virtual environment
-                script {
-                    sh 'python3 -m venv venv'
-                }
-                
-                // Activate the virtual environment
-                script {
-                    sh 'source venv/bin/activate'
-                }
-                
-                // Install dependencies if needed (example: pip install -r requirements.txt)
-                script {
-                    sh 'pip3 install -r requirements.txt'
-                }
+                    // Create a virtual environment
+                    script {
+                        sh 'python3 -m venv venv'
+                    }
+                    
+                    // Activate the virtual environment
+                    script {
+                        sh 'source venv/bin/activate'
+                    }
+                    
+                    // Install dependencies if needed (example: pip install -r requirements.txt)
+                    script {
+                        sh 'pip install -r requirements.txt'
+                    }
 
-                // Run the Python script
-                script {
-                    sh 'python3 main.py'
+                    // Run the Python script
+                    script {
+                        sh 'python main.py'
+                    }
                 }
-                
             }
         }
     }
