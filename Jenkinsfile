@@ -17,7 +17,7 @@ pipeline {
                     
                 // Create a virtual environment
                 script {
-                    sh 'python -m venv venv'
+                    sh 'python3 -m venv venv'
                 }
                 
                 // Activate the virtual environment
@@ -27,12 +27,12 @@ pipeline {
                 
                 // Install dependencies if needed (example: pip install -r requirements.txt)
                 script {
-                    sh 'pip install -r requirements.txt'
+                    sh 'pip3 install -r requirements.txt'
                 }
 
                 // Run the Python script
                 script {
-                    sh 'python main.py'
+                    sh 'python3 main.py'
                 }
                 
             }
