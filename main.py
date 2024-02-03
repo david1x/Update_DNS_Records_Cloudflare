@@ -28,6 +28,14 @@ def get_public_ip():
         return response.json()["ip"]
     raise Exception(f"Request to get public ip has failed. status code {response.status_code}")
 
+def ip_changed(public_ip):
+    with open("ip.txt", "r") as ip_file:
+        ip = ip_file.readline()
+        print(f"Previous public IP address: {public_ip}")
+        
+        if ip == public_ip:
+            return False
+        return True
 
 def get_record_id(record_name: str) -> list:
     headers = {
@@ -72,18 +80,28 @@ def update_dns_record(record_id, ip, record_name):
         print(f"DNS record [{record_name}] with ID {record_id} updated successfully.")
     else:
         print(f"Error updating DNS record. Status code: {response.status_code}")
+        exit(1)
 
 
 if __name__ == "__main__":
     try:
         public_ip = get_public_ip()
         print(f"Current public IP address: {public_ip}")
+            
+        if ip_changed(public_ip):
+            
+            with open("ip.txt", "w") as ip_file:
+                ip_file.write(public_ip)
+                
+            for record in dns_records:
+                record_id = get_record_id(record)
+                print(f"Found record with the name: {record}")
 
-        for record in dns_records:
-            record_id = get_record_id(record)
-            print(f"Found record with the name: {record}")
-
-            update_dns_record(record_id, public_ip, record)
+                update_dns_record(record_id, public_ip, record)
+        else:
+            print(f'Public ip ({public_ip}) has not changed, No update required.\nexit(0)')
+            exit(0)
 
     except Exception as e:
         print(f"An error occurred: {str(e)}")
+        exit(1)
