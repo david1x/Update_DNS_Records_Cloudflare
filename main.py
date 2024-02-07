@@ -30,10 +30,10 @@ def get_public_ip():
 
 def ip_changed(public_ip):
     with open("ip.txt", "r") as ip_file:
-        ip = ip_file.readline()
-        print(f"Previous public IP address: {public_ip}")
+        previous_ip = ip_file.readline()
+        print(f"Previous public IP address: {previous_ip}")
         
-        if ip == public_ip:
+        if previous_ip == public_ip:
             return False
         return True
 
@@ -87,7 +87,7 @@ if __name__ == "__main__":
     try:
         public_ip = get_public_ip()
         print(f"Current public IP address: {public_ip}")
-            
+        
         if ip_changed(public_ip):
             
             with open("ip.txt", "w") as ip_file:
