@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 import requests
+import time
 import json
 import os
 
@@ -22,6 +23,10 @@ dns_records = os.getenv("RECORDS").split(" ")
 # use split if there are multiple records | exp. in .env - 'RECORD=contact about' | split output 'records = ['contact', 'about']'
 
 
+def set_env_variable(name, value):
+    with open('/etc/environment', 'w') as env_file:
+        env_file.write(f'{name}={value}\n')
+
 def get_public_ip():
     response = requests.get("https://api64.ipify.org?format=json")
     if response.status_code == 200:
@@ -29,6 +34,10 @@ def get_public_ip():
     raise Exception(f"Request to get public ip has failed. status code {response.status_code}")
 
 def ip_changed(public_ip):
+    # ip_from_env = os.environ.get(public_ip)
+    # if ip_from_env == public_ip:
+    #     return False
+    # return True
     with open("ip.txt", "r") as ip_file:
         previous_ip = ip_file.readline()
         print(f"Previous public IP address: {previous_ip}")
@@ -83,25 +92,37 @@ def update_dns_record(record_id, ip, record_name):
         exit(1)
 
 
-if __name__ == "__main__":
+def main():
     try:
+        t1_start = time.perf_counter()
         public_ip = get_public_ip()
-        print(f"Current public IP address: {public_ip}")
-        
+        # set_env_variable('PUBLIC_IP', public_ip)
+        print("public_ip",public_ip, sep=": ")
+
         if ip_changed(public_ip):
-            
+            t2_start = time.perf_counter()
             with open("ip.txt", "w") as ip_file:
                 ip_file.write(public_ip)
-                
+            t2_stop = time.perf_counter()
+            print("Elapsed time during the opening and closing ip file in seconds:",
+                                                    t2_stop-t2_start)    
             for record in dns_records:
                 record_id = get_record_id(record)
                 print(f"Found record with the name: {record}")
 
                 update_dns_record(record_id, public_ip, record)
+                
+            t1_stop = time.perf_counter()
+            print("Elapsed time:", t1_stop, t1_start) 
+            print("Elapsed time during the whole program in seconds:",
+                                                    t1_stop-t1_start)
         else:
-            print(f'Public ip ({public_ip}) has not changed, No update required.\nexit(0)')
-            exit(0)
-
+            print(f'Public ip ({public_ip}) has not changed, No update required.\nRetry in 1 Hour...')
     except Exception as e:
         print(f"An error occurred: {str(e)}")
-        exit(1)
+        exit(1)            
+            
+
+
+if __name__ == "__main__":
+        main()
