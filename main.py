@@ -24,33 +24,29 @@ dns_records = os.getenv("RECORDS").split(" ")
 
 
 def set_env_variable(name, value):
-    print(f"SETENVVAR - current folder: {os.path.dirname(os.path.realpath(__file__))}")
     with open('/etc/environment', 'w') as env_file:
         env_file.write(f'{name}={value}\n')
 
 def get_public_ip():
-    print(f"GETPUBLICIP - current folder: {os.path.dirname(os.path.realpath(__file__))}")
     response = requests.get("https://api64.ipify.org?format=json")
     if response.status_code == 200:
         return response.json()["ip"]
     raise Exception(f"Request to get public ip has failed. status code {response.status_code}")
 
 def ip_changed(public_ip):
-    print(f"IPCHANGE - current folder: {os.path.dirname(os.path.realpath(__file__))}")
-    ip_from_env = os.environ.get(public_ip)
-    if ip_from_env == public_ip:
-        return False
-    return True
-    # with open("ip.txt", "r") as ip_file:
-    #     previous_ip = ip_file.readline()
-    #     print(f"Previous public IP address: {previous_ip}")
+    # ip_from_env = os.environ.get(public_ip)
+    # if ip_from_env == public_ip:
+    #     return False
+    # return True
+    with open("/home/deepin/ip.txt", "r") as ip_file:
+        previous_ip = ip_file.readline()
+        print(f"Previous public IP address: {previous_ip}")
         
-    #     if previous_ip == public_ip:
-    #         return False
-    #     return True
+        if previous_ip == public_ip:
+            return False
+        return True
 
 def get_record_id(record_name: str) -> list:
-    print(f"GETRECORDID - current folder: {os.path.dirname(os.path.realpath(__file__))}")
     headers = {
         "Authorization": f"Bearer {api_token}",
         "Content-Type": "application/json",
@@ -74,7 +70,6 @@ def get_record_id(record_name: str) -> list:
 
 
 def update_dns_record(record_id, ip, record_name):
-    print(f"UPDATEDNSRECORD - current folder: {os.path.dirname(os.path.realpath(__file__))}")
     headers = {
         "Authorization": f"Bearer {api_token}",
         "Content-Type": "application/json",
@@ -92,6 +87,7 @@ def update_dns_record(record_id, ip, record_name):
 
     if response.status_code == 200:
         print(f"DNS record [{record_name}] with ID {record_id} updated successfully.")
+        print("*" * 80)
     else:
         print(f"Error updating DNS record. Status code: {response.status_code}")
         exit(1)
@@ -108,17 +104,16 @@ def main():
             print(writer.read())
         
         if ip_changed(public_ip):
-            set_env_variable('PUBLIC_IP', public_ip)
             t2_start = time.perf_counter()
-            with open("ip.txt", "w") as ip_file:
+            with open("/home/deepin/ip.txt", "w") as ip_file:
                 ip_file.write(public_ip)
             t2_stop = time.perf_counter()
             print("Elapsed time during the opening and closing ip file in seconds:",
                                                     t2_stop-t2_start)    
             for record in dns_records:
                 record_id = get_record_id(record)
+                print("*" * 80)
                 print(f"Found record with the name: {record}")
-
                 update_dns_record(record_id, public_ip, record)
                 
             t1_stop = time.perf_counter()
