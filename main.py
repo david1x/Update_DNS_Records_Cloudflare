@@ -24,16 +24,19 @@ dns_records = os.getenv("RECORDS").split(" ")
 
 
 def set_env_variable(name, value):
+    print(f"SETENVVAR - current folder: {os.path.dirname(os.path.realpath(__file__))}")
     with open('/etc/environment', 'w') as env_file:
         env_file.write(f'{name}={value}\n')
 
 def get_public_ip():
+    print(f"GETPUBLICIP - current folder: {os.path.dirname(os.path.realpath(__file__))}")
     response = requests.get("https://api64.ipify.org?format=json")
     if response.status_code == 200:
         return response.json()["ip"]
     raise Exception(f"Request to get public ip has failed. status code {response.status_code}")
 
 def ip_changed(public_ip):
+    print(f"IPCHANGE - current folder: {os.path.dirname(os.path.realpath(__file__))}")
     ip_from_env = os.environ.get(public_ip)
     if ip_from_env == public_ip:
         return False
@@ -47,6 +50,7 @@ def ip_changed(public_ip):
     #     return True
 
 def get_record_id(record_name: str) -> list:
+    print(f"GETRECORDID - current folder: {os.path.dirname(os.path.realpath(__file__))}")
     headers = {
         "Authorization": f"Bearer {api_token}",
         "Content-Type": "application/json",
@@ -70,6 +74,7 @@ def get_record_id(record_name: str) -> list:
 
 
 def update_dns_record(record_id, ip, record_name):
+    print(f"UPDATEDNSRECORD - current folder: {os.path.dirname(os.path.realpath(__file__))}")
     headers = {
         "Authorization": f"Bearer {api_token}",
         "Content-Type": "application/json",
@@ -98,7 +103,7 @@ def main():
         public_ip = get_public_ip()
         # set_env_variable('PUBLIC_IP', public_ip)
         print("public_ip",public_ip, sep=": ")
-
+        print(f"MAIN - current folder: {os.path.dirname(os.path.realpath(__file__))}")
         if ip_changed(public_ip):
             set_env_variable('PUBLIC_IP', public_ip)
             t2_start = time.perf_counter()
