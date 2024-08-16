@@ -103,7 +103,10 @@ def main():
         public_ip = get_public_ip()
         # set_env_variable('PUBLIC_IP', public_ip)
         print("public_ip",public_ip, sep=": ")
-        print(f"MAIN - current folder: {os.path.dirname(os.path.realpath(__file__))}")
+        
+        with open("/home/deepin/ip.txt", "r") as writer:
+            print(writer.read())
+        
         if ip_changed(public_ip):
             set_env_variable('PUBLIC_IP', public_ip)
             t2_start = time.perf_counter()
