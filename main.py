@@ -40,7 +40,7 @@ def ip_changed(public_ip):
     # return True
     with open("/home/deepin/ip.txt", "r") as ip_file:
         previous_ip = ip_file.readline()
-        print(f"Previous public IP address: {previous_ip}")
+        print(f"Previous Public IP Address: {previous_ip}")
         
         if previous_ip == public_ip:
             return False
@@ -113,7 +113,7 @@ def main():
                 update_dns_record(record_id, public_ip, record)
                 
             t1_stop = time.perf_counter()
-            print("Elapsed time:", t1_stop, t1_start) 
+            # print("Elapsed time:", t1_stop, t1_start) 
             print("Elapsed time during the whole program in seconds:",
                                                     t1_stop-t1_start)
         else:
