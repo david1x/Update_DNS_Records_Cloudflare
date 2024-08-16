@@ -97,22 +97,18 @@ def main():
     try:
         t1_start = time.perf_counter()
         public_ip = get_public_ip()
-        # set_env_variable('PUBLIC_IP', public_ip)
-        print("public_ip",public_ip, sep=": ")
-        
-        with open("/home/deepin/ip.txt", "r") as writer:
-            print(writer.read())
+        # set_env_variable('PUBLIC_IP', public_ip) # Not Used
+        print("Current Public IP",public_ip, sep=": ")
         
         if ip_changed(public_ip):
             t2_start = time.perf_counter()
             with open("/home/deepin/ip.txt", "w") as ip_file:
                 ip_file.write(public_ip)
             t2_stop = time.perf_counter()
-            print("Elapsed time during the opening and closing ip file in seconds:",
-                                                    t2_stop-t2_start)    
+            print("Elapsed time during the opening and closing ip file in seconds:", t2_stop-t2_start, end="\n")    
+            print("*" * 80)
             for record in dns_records:
                 record_id = get_record_id(record)
-                print("*" * 80)
                 print(f"Found record with the name: {record}")
                 update_dns_record(record_id, public_ip, record)
                 
